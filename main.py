@@ -60,14 +60,14 @@ def twt_main():
     stream.filter(track = keywords_to_track)
 
     with open('streamer_test.json') as fp:
-    cnt = 0
-    while cnt < 2:
-        # print("Line {}: {} \n".format(cnt, line.strip()))
-        # print("JSON: {}".format(json.loads(line)))
-        line = json.loads(fp.readline())
-        print(line['text'])
-        print('\n')
-        cnt += 1
+        cnt = 0
+        while cnt < 2:
+            # print("Line {}: {} \n".format(cnt, line.strip()))
+            # print("JSON: {}".format(json.loads(line)))
+            line = json.loads(fp.readline())
+            print(line['text'])
+            print('\n')
+            cnt += 1
 
     return('FOO')
 
