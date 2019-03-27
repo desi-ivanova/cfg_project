@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 import iss
+import twtr
 
 app = Flask(__name__)
 
@@ -30,7 +31,9 @@ def iss_main():
         postcode=postcode
     )
 
-
+@app.route('/twt',)
+def twt_main():
+    return('FOO')
 
 if __name__ == '__main__':
     app.run(debug=True)
