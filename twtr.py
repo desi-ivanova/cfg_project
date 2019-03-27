@@ -13,7 +13,7 @@ class SListener(StreamListener):
         self.limit = time_limit
         self.counter = 0
         self.fprefix = fprefix
-        self.output  = open('%s_%s.json' % (self.fprefix, time.strftime('%Y%m%d-%H%M%S')), 'w')
+        self.output  = open('%s_%s.json' % (self.fprefix, 'test'), 'w')
 
 
     def on_data(self, data):
