@@ -49,7 +49,7 @@ def twt_main():
 
     # Set up words to track
     keywords_to_track = ['#brexit', '#referendum', '#nodeal', '#maybot', '#theresamay', '#jeremycorbyn', 
-                         '#peoplesvote', '#letwin', '#tory', 'Boris Johnson', 'Theresa May']
+                         '#peoplesvote', '#letwin', '#tory', 'Boris Johnson', 'Theresa May', '#indicativevotes']
 
     # Instantiate the SListener object 
     listen = twtr.SListener(api, time_limit=10)
@@ -70,7 +70,7 @@ def twt_main():
             print('\n')
             cnt += 1
 
-    return('FOO')
+    return(line)
 
 if __name__ == '__main__':
     app.run(debug=True)
