@@ -70,7 +70,7 @@ def twt_main():
             print('\n')
             cnt += 1
 
-    return(line)
+    return(line['text'])
 
 if __name__ == '__main__':
     app.run(debug=True)
