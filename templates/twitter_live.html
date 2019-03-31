@@ -24,10 +24,12 @@
     
       </div>
       
-    {% if kwd != None %}
-        <h4>Listened for {{ show_time }}. Latest tweets for : {{ kwd }}</h4>
-        {{ tweets_to_show }}
+        {% if kwd != None %}
+            <h4>Listened for {{ show_time }}. Latest tweets for : {{ kwd }}</h4>
         
+        {% for tweet in show_tweets %}
+           <p> {{ tweet | safe}} </p>
+        {% endfor %}
       {% endif %}
     </div>
   </div>    

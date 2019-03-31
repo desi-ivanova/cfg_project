@@ -108,16 +108,16 @@ def get_historical(kwd, result_type='popular'):
     -------
         cursor_historical.json file containing tweets
     """
-    out_text = []
-    out_favcount = []
+    #out_text = []
+    #out_favcount = []
     out_file = open('cursor_historical.json', 'w')
     with open('cursor_historical.json', 'w') as out_file:
-        for tweet in tweepy.Cursor(api.search, q=kwd, count=100, lang="en", result_type = result_type).items(100):
+        for tweet in tweepy.Cursor(api.search, q=kwd, count=100, lang="en", result_type = result_type, tweet_mode='extended').items(100):
         
             out_file.write(json.dumps(tweet._json))
             out_file.write('\n')
-            out_text.append(tweet.text)
-            out_favcount.append(tweet.favorite_count)
+            #out_text.append(tweet.full_text)
+            #out_favcount.append(tweet.favorite_count)
     
     return # (out_text, out_favcount) 
 
@@ -139,6 +139,8 @@ def flatten_tweets(tweets_json):
         if 'extended_tweet' in tweet:
             # Store the extended tweet text in 'extended_tweet-full_text'
             tweet['tweet_text'] = tweet['extended_tweet']['full_text']
+        elif 'full_text' in tweet:
+            tweet['tweet_text'] = tweet['full_text']
         else:
             tweet['tweet_text'] = tweet['text']
     
@@ -179,7 +181,7 @@ def compute_sentiment(flattended_tweets, return_all = False):
     sid = SentimentIntensityAnalyzer()
 
     # Generate sentiment scores
-    sentiment_scores = flattended_tweets['text'].apply(lambda x: sid.polarity_scores(x))
+    sentiment_scores = flattended_tweets['tweet_text'].apply(lambda x: sid.polarity_scores(x))
     
     if return_all:
         return sentiment_scores
@@ -197,4 +199,5 @@ def clean_and_analyse(json_file):
     
     show_tweets = pd.concat([tweets.tail(2), tweets.head(2)])
     return show_tweets
+    
     

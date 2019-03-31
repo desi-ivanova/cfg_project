@@ -25,7 +25,11 @@
         
       {% if kwd != None %}
         <h4>{{ result_type }} tweets for : {{ kwd }}</h4>
-        {{ tweets_to_show }}
+         
+        {% for tweet in show_tweets %}
+           <p> {{ tweet | safe}} </p>
+        {% endfor %}
+        
       {% endif %}
     </div>
   </div>    

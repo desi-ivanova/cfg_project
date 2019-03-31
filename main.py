@@ -62,12 +62,13 @@ def twt_live():
     # Flatten the tweets and store in `tweets`
     
     show_tweets = twtr.clean_and_analyse('streamer_listened.json')
+    
     return render_template(
         'twitter_live.html',
         kwd=kwd,
         time_limit=time_limit,
         show_time=show_time,
-        tweets_to_show=['{} \n'.format(f) for f in show_tweets['tweet_text']],
+        show_tweets= show_tweets.tweet_text.values,#['{} \n'.format(f) for f in show_tweets['tweet_text']],
         title = 'Live Tweets'
     )
 
@@ -87,19 +88,17 @@ def twt_hist():
         twtr.get_historical(kwd_clean, result_type)
     
     
-    # Flatten the tweets and store in `tweets`
-    tweets = pd.DataFrame(twtr.flatten_tweets('cursor_historical.json'))
     
     # Print out the first 5 tweets from this dataset
     #print(ds_tweets['text'].values[0:5])
     #res = twtr.get_historical(kwd = ['#brexit']) #get_historical
-    tweets_to_show = twtr.clean_and_analyse('cursor_historical.json')
+    show_tweets = twtr.clean_and_analyse('cursor_historical.json')
     
     return render_template(
         'twitter_hist.html',
         kwd=kwd,
         result_type=result_type.capitalize() if result_type is not None else None,
-        tweets_to_show=tweets_to_show['text'],
+        show_tweets=show_tweets.tweet_text.values,
         title = 'Historical Tweets'
     )
 
