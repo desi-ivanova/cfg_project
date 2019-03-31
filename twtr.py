@@ -3,6 +3,7 @@ import tweepy
 from tweepy import OAuthHandler, API, Stream, OAuthHandler
 from tweepy.streaming import StreamListener
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import pandas as pd
 
 import nltk
 nltk.downloader.download('vader_lexicon')
@@ -188,11 +189,12 @@ def compute_sentiment(flattended_tweets, return_all = False):
     
     
 def clean_and_analyse(json_file):
-    tweets = pd.DataFrame(twtr.flatten_tweets(json_file))
+    tweets = pd.DataFrame(flatten_tweets(json_file))
     
-    tweets['sentiment'] = twtr.compute_sentiment(tweets)
+    tweets['sentiment'] = compute_sentiment(tweets)
     
     tweets=tweets.sort_values('sentiment')
     
     show_tweets = pd.concat([tweets.tail(2), tweets.head(2)])
+    return show_tweets
     

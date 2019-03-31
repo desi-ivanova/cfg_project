@@ -61,7 +61,7 @@ def twt_live():
         
     # Flatten the tweets and store in `tweets`
     
-    
+    show_tweets = twtr.clean_and_analyse('streamer_listened.json')
     return render_template(
         'twitter_live.html',
         kwd=kwd,
@@ -93,6 +93,7 @@ def twt_hist():
     # Print out the first 5 tweets from this dataset
     #print(ds_tweets['text'].values[0:5])
     #res = twtr.get_historical(kwd = ['#brexit']) #get_historical
+    tweets_to_show = twtr.clean_and_analyse('cursor_historical.json')
     
     return render_template(
         'twitter_hist.html',
