@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+  <div class="container">
+
+    <div class="card text-left">
+      <div class="card-header">
+        What's new
+      </div>
+      <div id="kwd-form">
+        <form method="post">
+          <label for="kwd">Keywords: </label>
+          <input type="text" id="kwd" name="kwd">
+            
+            <select name="result_type" id="result_type">
+              <option value="popular">Popular</option>
+              <option value="recent">Recent</option>
+            </select>
+          <input type="submit" id="submit-button" value="Submit">
+        </form>
+      </div>
+        
+        
+      {% if kwd != None %}
+        <h4>{{ result_type }} tweets for : {{ kwd }}</h4>
+        {{ tweets_to_show }}
+      {% endif %}
+    </div>
+  </div>    
+    
+{% endblock %}

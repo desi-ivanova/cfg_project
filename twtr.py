@@ -2,6 +2,7 @@ from datetime import datetime
 import tweepy
 from tweepy import OAuthHandler, API, Stream, OAuthHandler
 from tweepy.streaming import StreamListener
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 import json
 import time
@@ -133,7 +134,9 @@ def flatten_tweets(tweets_json):
         # Check if this is a 140+ character tweet
         if 'extended_tweet' in tweet:
             # Store the extended tweet text in 'extended_tweet-full_text'
-            tweet['extended_tweet-full_text'] = tweet['extended_tweet']['full_text']
+            tweet['tweet_text'] = tweet['extended_tweet']['full_text']
+        else:
+            tweet['tweet_text'] = tweet['text']
     
         if 'retweeted_status' in tweet:
             # Store the retweet user screen name in 'retweeted_status-user-screen_name'
@@ -141,6 +144,11 @@ def flatten_tweets(tweets_json):
 
             # Store the retweet text in 'retweeted_status-text'
             tweet['retweeted_status-text'] = tweet['retweeted_status']['text']
+            
+            if 'extended_tweet' in tweet['retweeted_status']:
+            # Store the extended tweet text in 'extended_tweet-full_text'
+                tweet['tweet_text'] = tweet['retweeted_status']['extended_tweet']['full_text']
+        
             
         tweets_list.append(tweet)
     return tweets_list
@@ -160,3 +168,17 @@ def check_word_in_tweet(word, data):
     contains_column |= data['retweeted_status-text'].str.contains(word, case = False)
     contains_column |= data['retweeted_status-extended_tweet-full_text'].str.contains(word, case = False)
     return contains_column
+
+
+
+def compute_sentiment(flattended_tweets, return_all = False):
+    sid = SentimentIntensityAnalyzer()
+
+    # Generate sentiment scores
+    sentiment_scores = flattended_tweets['text'].apply(lambda x: sid.polarity_scores(x))
+    
+    if return_all:
+        return sentiment_scores
+    else:
+        return [s['compound'] for s in sentiment_scores]
+    

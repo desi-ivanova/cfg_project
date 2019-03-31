@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <div class="container">
+
+    <div class="card text-center">
+      <div class="card-header">
+        What's new
+      </div>
+      
+      <div id="kwd-form">
+        <form method="post">
+         
+          <label for="kwd">Keywords: </label>
+          <input type="text" id="kwd" name="kwd">
+
+          <label for="time_limit">Time limit: </label>
+          <input type="number" id="time_limit" name="time_limit", min = "0.1", max = "10", step = "0.1">
+            
+          <input type="submit" id="submit-button" value="Submit">
+        </form>
+          
+    
+      </div>
+      
+    {% if kwd != None %}
+        <h4>Listened for {{ show_time }}. Latest tweets for : {{ kwd }}</h4>
+        {{ tweets_to_show }}
+        
+      {% endif %}
+    </div>
+  </div>    
+    
+{% endblock %}
