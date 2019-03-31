@@ -40,13 +40,14 @@ def twt_live():
     tweets_to_show = None
     time_limit = None
     show_time = None
+    show_tweets = None
             
     if request.method == 'POST':
         kwd = request.form.get('kwd')
         kwd_clean = kwd.split(',')
         kwd_clean = [k.strip() for k in kwd_clean]
         time_limit = float(request.form.get('time_limit')) * 60
-         
+        
         if time_limit < 60:
             show_time = '{} seconds'.format(time_limit)
         elif time_limit > 60:
@@ -57,25 +58,24 @@ def twt_live():
         print("kwd: {}, type: {}".format(kwd_clean, type(kwd_clean)))
         print("time_limit: {}, type: {}".format(time_limit, type(time_limit)))
         
-        # twtr.get_live(kwd_clean, time_limit = time_limit)
+        twtr.get_live(kwd_clean, time_limit = time_limit)
+        show_tweets = twtr.clean_and_analyse('streamer_listened.json')
         
     # Flatten the tweets and store in `tweets`
-    
-    show_tweets = twtr.clean_and_analyse('streamer_listened.json')
     
     return render_template(
         'twitter_live.html',
         kwd=kwd,
         time_limit=time_limit,
         show_time=show_time,
-        show_tweets= show_tweets.tweet_text.values,#['{} \n'.format(f) for f in show_tweets['tweet_text']],
+        show_tweets=show_tweets.tweet_text.values if show_tweets is not None else None,#['{} \n'.format(f) for f in show_tweets['tweet_text']],
         title = 'Live Tweets'
     )
 
 @app.route('/twt_hist', methods=['GET', 'POST'])
 def twt_hist():
     kwd = None
-    tweets_to_show = None
+    show_tweets = None
     result_type = None
     
     if request.method == 'POST':
@@ -86,19 +86,18 @@ def twt_hist():
         print("kwd: {}, type: {}".format(kwd_clean, type(kwd_clean)))
         print("result_type: {}, type: {}".format(result_type, type(result_type)))
         twtr.get_historical(kwd_clean, result_type)
-    
-    
+        show_tweets = twtr.clean_and_analyse('cursor_historical.json')
     
     # Print out the first 5 tweets from this dataset
     #print(ds_tweets['text'].values[0:5])
     #res = twtr.get_historical(kwd = ['#brexit']) #get_historical
-    show_tweets = twtr.clean_and_analyse('cursor_historical.json')
+    
     
     return render_template(
         'twitter_hist.html',
         kwd=kwd,
         result_type=result_type.capitalize() if result_type is not None else None,
-        show_tweets=show_tweets.tweet_text.values,
+        show_tweets=show_tweets.tweet_text.values if show_tweets is not None else None,
         title = 'Historical Tweets'
     )
 
