@@ -60,11 +60,8 @@ def twt_live():
         # twtr.get_live(kwd_clean, time_limit = time_limit)
         
     # Flatten the tweets and store in `tweets`
-    tweets = pd.DataFrame(twtr.flatten_tweets('streamer_listened.json'))
     
-    tweets['sentiment'] = twtr.compute_sentiment(tweets)
-    tweets=tweets.sort_values('sentiment')
-    show_tweets = pd.concat([tweets.tail(2), tweets.head(2)])
+    
     return render_template(
         'twitter_live.html',
         kwd=kwd,
@@ -104,6 +101,8 @@ def twt_hist():
         tweets_to_show=tweets_to_show['text'],
         title = 'Historical Tweets'
     )
+
+
 
 
 
