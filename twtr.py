@@ -149,7 +149,10 @@ def flatten_tweets(tweets_json):
             tweet['retweeted_status-user-screen_name'] = tweet['retweeted_status']['user']['screen_name']
 
             # Store the retweet text in 'retweeted_status-text'
-            tweet['retweeted_status-text'] = tweet['retweeted_status']['text']
+            if 'text' in  tweet['retweeted_status']:
+                tweet['retweeted_status-text'] = tweet['retweeted_status']['text']
+            else:
+                tweet['retweeted_status-text'] = tweet['retweeted_status']['full_text']
             
             if 'extended_tweet' in tweet['retweeted_status']:
             # Store the extended tweet text in 'extended_tweet-full_text'
@@ -186,7 +189,7 @@ def compute_sentiment(flattended_tweets, return_all = False):
     if return_all:
         return sentiment_scores
     else:
-        return [s['compound'] for s in sentiment_scores]
+        return [['compound'] for s in sentiment_scores]
     
     
     
