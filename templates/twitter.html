@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <div class="container">
+    <div class="row header-row">
+      <div class="col-md-2 offset-md-5" align="center">
+        <h1>Twitter<img src="https://images.vexels.com/media/users/3/152639/isolated/preview/506b575739e90613428cdb399175e2c8-space-astronaut-cartoon-by-vexels.png"/></h1>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card text-center">
+      <div class="card-header">
+        Current ISS Position
+      </div>
+      <div class="card-body">
+        Hello!
+      </div>
+    </div>
+
+    <div class="card text-center">
+      <div class="card-header">
+        What's new
+      </div>
+      <p class="card-text">Enter keywords.</p>
+      <div id="kwd-form">
+        <form method="post">
+          <label for="kwd"></label>
+          <input type="text" id="kwd" name="kwd">
+          <input type="submit" id="submit-button" value="Submit">
+        </form>
+          
+    
+      </div>
+      {% if kwd != None %}
+        <h4>Latest tweets for : {{ kwd }}</h4>
+        {{ tweets_to_show }}
+      {% endif %}
+    </div>
+  </div>    
+    
+{% endblock %}

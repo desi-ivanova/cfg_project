@@ -1,7 +1,8 @@
 from datetime import datetime
-
-from tweepy import OAuthHandler, API
+import tweepy
+from tweepy import OAuthHandler, API, Stream, OAuthHandler
 from tweepy.streaming import StreamListener
+
 import json
 import time
 import sys
@@ -13,7 +14,7 @@ class SListener(StreamListener):
         self.limit = time_limit
         self.counter = 0
         self.fprefix = fprefix
-        self.output  = open('%s_%s.json' % (self.fprefix, 'test'), 'w')
+        self.output  = open('%s_%s.json' % (self.fprefix, 'listened'), 'w')
 
 
     def on_data(self, data):
@@ -64,3 +65,98 @@ class SListener(StreamListener):
         time.sleep(60)
         return 
 
+# Consumer key authentication
+auth = OAuthHandler('POtvWDXl74vOtKxgK00oJZGWx', 'L1ASG7vlTwTWTbVHxgdkNgNoeejYPhT7tDu8H5LuELO0fae8IW')
+# Access key authentication
+auth.set_access_token('2909167113-et0k0ZVAxEalFyP9BRoJPKD2S9sIQqyGXcClRcC', 'A19IdhhZLEEhv0mj3dWPMp6G8RRxHZXUw01jDlpVHhmYl')
+# Set up the API with the authentication handler
+api = API(auth)
+
+
+def get_live(kwd, time_limit = 20): 
+    """
+    Params:
+    -------
+        kwd: keywords
+        time_limit: time limit to listen in seconds
+    
+    Output:
+    -------
+        streamer_listened.json file containing tweets
+    """
+    # Instantiate the SListener object 
+    listen = SListener(api, time_limit=time_limit)
+    # Instantiate the Stream object
+    stream = Stream(auth, listen)
+    
+    # Begin collecting data
+    stream.filter(track = kwd)
+    return
+
+def get_historical(kwd, result_type='popular'):
+    """
+    Params:
+    -------
+        kwd: keywords
+        result_type: type of result, passsed to tweepy.Cursor; default <popular>    
+    Output:
+    -------
+        cursor_historical.json file containing tweets
+    """
+    out_text = []
+    out_favcount = []
+    out_file = open('cursor_historical.json', 'w')
+    with open('cursor_historical.json', 'w') as out_file:
+        for tweet in tweepy.Cursor(api.search, q=kwd, count=100, lang="en", result_type = result_type).items(100):
+        
+            out_file.write(json.dumps(tweet._json))
+            out_file.write('\n')
+            out_text.append(tweet.text)
+            out_favcount.append(tweet.favorite_count)
+    
+    return # (out_text, out_favcount) 
+
+
+### helpers
+def flatten_tweets(tweets_json):
+    """ Flattens out tweet dictionaries so relevant JSON
+        is in a top-level dictionary."""
+    
+    tweets_list = []
+    
+    for line in open(tweets_json, 'r'):
+        # tweet_obj = json.loads(tweet)
+        tweet = json.loads(line)
+        # Store the user screen name in 'user-screen_name'
+        tweet['user-screen_name'] = tweet['user']['screen_name']
+    
+        # Check if this is a 140+ character tweet
+        if 'extended_tweet' in tweet:
+            # Store the extended tweet text in 'extended_tweet-full_text'
+            tweet['extended_tweet-full_text'] = tweet['extended_tweet']['full_text']
+    
+        if 'retweeted_status' in tweet:
+            # Store the retweet user screen name in 'retweeted_status-user-screen_name'
+            tweet['retweeted_status-user-screen_name'] = tweet['retweeted_status']['user']['screen_name']
+
+            # Store the retweet text in 'retweeted_status-text'
+            tweet['retweeted_status-text'] = tweet['retweeted_status']['text']
+            
+        tweets_list.append(tweet)
+    return tweets_list
+
+
+
+def check_word_in_tweet(word, data):
+    """Checks if a word is in a Twitter dataset's text. 
+    Checks text and extended tweet (140+ character tweets) for tweets,
+    retweets and quoted tweets.
+    Returns a logical pandas Series.
+    """
+    contains_column = data['text'].str.contains(word, case = False)
+    contains_column |= data['extended_tweet-full_text'].str.contains(word, case = False)
+    contains_column |= data['quoted_status-text'].str.contains(word, case = False)
+    contains_column |= data['quoted_status-extended_tweet-full_text'].str.contains(word, case = False)
+    contains_column |= data['retweeted_status-text'].str.contains(word, case = False)
+    contains_column |= data['retweeted_status-extended_tweet-full_text'].str.contains(word, case = False)
+    return contains_column

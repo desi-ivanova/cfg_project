@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request
+import pandas as pd
 import iss
-from tweepy import OAuthHandler
-from tweepy import API
 import twtr
 import json
 
@@ -34,43 +33,61 @@ def iss_main():
         postcode=postcode
     )
 
-@app.route('/twt',)
-def twt_main():
-    # Consumer key authentication
-    auth = OAuthHandler('POtvWDXl74vOtKxgK00oJZGWx', 'L1ASG7vlTwTWTbVHxgdkNgNoeejYPhT7tDu8H5LuELO0fae8IW')
+@app.route('/twt_live', methods=['GET', 'POST'])
+def twt_live():
+    kwd = None
+    tweets_to_show = None
+    # time_limit
+    
+    if request.method == 'POST':
+        kwd = request.form.get('kwd')
+        kwd_clean = kwd.split(',')
+        kwd_clean = [k.strip() for k in kwd_clean]
+        print("kwd: {}, type: {}".format(kwd_clean, type(kwd_clean)))
+        # twtr.get_live(kwd_clean)
 
-    # Access key authentication
-    auth.set_access_token('2909167113-et0k0ZVAxEalFyP9BRoJPKD2S9sIQqyGXcClRcC', 'A19IdhhZLEEhv0mj3dWPMp6G8RRxHZXUw01jDlpVHhmYl')
+    # Flatten the tweets and store in `tweets`
+    tweets = pd.DataFrame(twtr.flatten_tweets('streamer_listened.json'))
+    
+    # Print out the first 5 tweets from this dataset
+    #print(ds_tweets['text'].values[0:5])
+    #res = twtr.get_historical(kwd = ['#brexit']) #get_historical
+    
+    return render_template(
+        'twitter.html',
+        kwd=kwd,
+        tweets_to_show=tweets['text'],
+        title = 'Live Tweets'
+    )
 
-    # Set up the API with the authentication handler
-    api = API(auth)
+@app.route('/twt_hist', methods=['GET', 'POST'])
+def twt_hist():
+    kwd = None
+    tweets_to_show = None
+    # time_limit
+    
+    if request.method == 'POST':
+        kwd = request.form.get('kwd')
+        kwd_clean = kwd.split(',')
+        kwd_clean = [k.strip() for k in kwd_clean]
+        print("kwd: {}, type: {}".format(kwd_clean, type(kwd_clean)))
+        twtr.get_historical(kwd_clean)
 
-    from tweepy import Stream
+    # Flatten the tweets and store in `tweets`
+    tweets = pd.DataFrame(twtr.flatten_tweets('cursor_historical.json'))
+    
+    # Print out the first 5 tweets from this dataset
+    #print(ds_tweets['text'].values[0:5])
+    #res = twtr.get_historical(kwd = ['#brexit']) #get_historical
+    
+    return render_template(
+        'twitter.html',
+        kwd=kwd,
+        tweets_to_show=tweets['text'],
+        title = 'Historical Tweets'
+    )
 
-    # Set up words to track
-    keywords_to_track = ['#brexit', '#referendum', '#nodeal', '#maybot', '#theresamay', '#jeremycorbyn', 
-                         '#peoplesvote', '#letwin', '#tory', 'Boris Johnson', 'Theresa May', '#indicativevotes']
 
-    # Instantiate the SListener object 
-    listen = twtr.SListener(api, time_limit=10)
-
-    # Instantiate the Stream object
-    stream = Stream(auth, listen)
-
-    # Begin collecting data
-    stream.filter(track = keywords_to_track)
-
-    with open('streamer_test.json') as fp:
-        cnt = 0
-        while cnt < 2:
-            # print("Line {}: {} \n".format(cnt, line.strip()))
-            # print("JSON: {}".format(json.loads(line)))
-            line = json.loads(fp.readline())
-            print(line['text'])
-            print('\n')
-            cnt += 1
-
-    return(line['text'])
 
 if __name__ == '__main__':
     app.run(debug=True)

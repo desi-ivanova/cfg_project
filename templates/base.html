@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+  {% if title %}
+      <title>{{ title }}</title>
+  {% else %}
+      <title>RandomFields</title>
+  {% endif %}
+    
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+    
+<body>
+    <header>
+      <div class="container">
+        <h1 class="logo">RandomFields</h1>
+        <strong> <nav>
+          <ul class="menu">
+            <li><a href="{{ url_for('iss_main') }}">Home</a></li>
+            <li><a href="{{ url_for('iss_main') }}">Posts</a></li>
+            
+            <li> 
+                <div class="dropdown">
+                    <button class="dropbtn"><strong>Tweets Analyser </strong> </button>
+                    <div class="dropdown-content">
+                      <a href="{{ url_for('twt_live') }}">Live</a>
+                      <a href="{{ url_for('twt_hist') }}">Historical</a>
+                    </div>
+                </div>
+            </li>
+            
+            <li><a href="{{ url_for('hello') }}">About</a></li>
+          </ul>
+        </nav></strong>
+      </div>
+    </header>
+    
+    {% block content %}{% endblock %}
+
+</body>
+
+</html>
