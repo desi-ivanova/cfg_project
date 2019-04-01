@@ -6,7 +6,7 @@
 
     <div class="card text-center">
       <div class="card-header">
-        What's new
+       <h1> What's new? </h1>
       </div>
       
       <div id="kwd-form">
@@ -30,6 +30,7 @@
         {% for tweet in show_tweets %}
            <p> {{ tweet | safe}} </p>
         {% endfor %}
+        <p><img src="/static/foo.png" width="800", height="600"/></p>
       {% endif %}
     </div>
   </div>    

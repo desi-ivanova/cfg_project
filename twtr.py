@@ -3,7 +3,10 @@ import tweepy
 from tweepy import OAuthHandler, API, Stream, OAuthHandler
 from tweepy.streaming import StreamListener
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 import pandas as pd
+import matplotlib.pyplot as plt
+import re
 
 import nltk
 nltk.downloader.download('vader_lexicon')
@@ -141,7 +144,7 @@ def flatten_tweets(tweets_json):
             tweet['tweet_text'] = tweet['extended_tweet']['full_text']
         elif 'full_text' in tweet:
             tweet['tweet_text'] = tweet['full_text']
-        else:
+        elif 'text' in tweet:
             tweet['tweet_text'] = tweet['text']
     
         if 'retweeted_status' in tweet:
@@ -202,5 +205,23 @@ def clean_and_analyse(json_file):
     
     show_tweets = pd.concat([tweets.tail(2), tweets.head(2)])
     return show_tweets
+
+
+def gen_image(json_file):
+    
+    # Create and generate a word cloud image:
+    flat = pd.DataFrame(flatten_tweets(json_file))
+    flat = [re.sub(r'http\S+', '', x) for x in flat['tweet_text'].values]
+    text = str(flat)
+    stopwords = set(STOPWORDS)
+    stopwords.update(["https", "RT", "http",  "nhttp", '\n', 'Brexit', 'nHe', 'co', 'amp'])
+    wordcloud = WordCloud(stopwords=stopwords, background_color="white").generate(text)
+
+    # Display the generated image:
+    # the matplotlib way:
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis("off")
+    plt.savefig('static/foo.png')
+    return
     
     

@@ -20,34 +20,6 @@
     overflow: hidden;
 } 
 
-div #loading {
-    width: 35px;
-    height: 35px;
-    display: none;
-    background: url(/static/loadingimage.gif) no-repeat;
-    cursor: wait;
-    }
-
-
-.iss-header {
-  height: 50px;
-  align-content: center;
-}
-
-.iss-header h1 {
-  max-height: 100%;
-}
-
-.iss-header img {
-  width: auto;
-  max-height: 100%;
-}
-
-img {
-  width: auto;
-  max-height: 50%;
-  height: 70px;
-}
 
 .row header-row {
   height: 80px;

@@ -60,6 +60,8 @@ def twt_live():
         
         twtr.get_live(kwd_clean, time_limit = time_limit)
         show_tweets = twtr.clean_and_analyse('streamer_listened.json')
+        twtr.gen_image('streamer_listened.json')
+        
         
     # Flatten the tweets and store in `tweets`
     
@@ -87,6 +89,7 @@ def twt_hist():
         print("result_type: {}, type: {}".format(result_type, type(result_type)))
         twtr.get_historical(kwd_clean, result_type)
         show_tweets = twtr.clean_and_analyse('cursor_historical.json')
+        twtr.gen_image('cursor_historical.json')
     
     # Print out the first 5 tweets from this dataset
     #print(ds_tweets['text'].values[0:5])
