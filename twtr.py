@@ -111,24 +111,23 @@ def get_historical(kwd, result_type='popular'):
     -------
         cursor_historical.json file containing tweets
     """
-    #out_text = []
-    #out_favcount = []
     out_file = open('cursor_historical.json', 'w')
     with open('cursor_historical.json', 'w') as out_file:
         for tweet in tweepy.Cursor(api.search, q=kwd, count=100, lang="en", result_type = result_type, tweet_mode='extended').items(100):
         
             out_file.write(json.dumps(tweet._json))
-            out_file.write('\n')
-            #out_text.append(tweet.full_text)
-            #out_favcount.append(tweet.favorite_count)
-    
-    return # (out_text, out_favcount) 
+            out_file.write('\n')    
+    return 
 
 
 ### helpers
 def flatten_tweets(tweets_json):
-    """ Flattens out tweet dictionaries so relevant JSON
-        is in a top-level dictionary."""
+    """ Flattens out tweet dictionaries
+    
+    Params:
+    -------
+        tweets_json: json file containing tweets
+    """
     
     tweets_list = []
     
@@ -184,6 +183,14 @@ def check_word_in_tweet(word, data):
 
 
 def compute_sentiment(flattended_tweets, return_all = False):
+    """
+    Params:
+    -------
+        flattended_tweets: pandas dataframe containing tweets
+    Returns:
+    --------
+        Same dataframe with extra column <sentiment>
+    """
     sid = SentimentIntensityAnalyzer()
 
     # Generate sentiment scores
@@ -197,6 +204,14 @@ def compute_sentiment(flattended_tweets, return_all = False):
     
     
 def clean_and_analyse(json_file):
+    """
+    Params:
+    -------
+        json_file: name of the json file containing tweets
+    Returns:
+    --------
+        pandas dataframe with top 2 and bottom 2 tweets according to high/low setniment
+    """
     tweets = pd.DataFrame(flatten_tweets(json_file))
     
     tweets['sentiment'] = compute_sentiment(tweets)
@@ -208,7 +223,15 @@ def clean_and_analyse(json_file):
 
 
 def gen_image(json_file):
+    """
+    Params:
+    -------
+        json_file: name of the json file containing tweets
+    Returns:
+    --------
+        A png image
     
+    """
     # Create and generate a word cloud image:
     flat = pd.DataFrame(flatten_tweets(json_file))
     flat = [re.sub(r'http\S+', '', x) for x in flat['tweet_text'].values]
